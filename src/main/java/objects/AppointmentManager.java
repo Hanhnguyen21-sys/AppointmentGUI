@@ -2,23 +2,24 @@ package objects;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
 public class AppointmentManager {
     // using hashset to make sure all appointments are unique
-    private HashSet<Appointment> appoinments;
+    private HashSet<Appointment> appointments;
     public AppointmentManager()
     {
-        appoinments = new HashSet<>();
+        appointments = new HashSet<>();
     }
-    public HashSet<Appointment> getAppoinments() {
-        return appoinments;
+    public HashSet<Appointment> getAppointments() {
+        return appointments;
     }
 
-    public void setAppoinments(HashSet<Appointment> appoinments) {
-        this.appoinments = appoinments;
+    public void setAppoinments(HashSet<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     /**
@@ -27,13 +28,16 @@ public class AppointmentManager {
      */
     public void add(Appointment appointment)
     {
-        if(!appoinments.add(appointment)){
+        if(appointments.contains(appointment)){
             throw new IllegalArgumentException("Appointment already exists");
+        }
+        else {
+            appointments.add(appointment);
         }
     }
     public void delete(Appointment appointment)
     {
-        if(!appoinments.remove(appointment)){
+        if(!appointments.remove(appointment)){
             throw new IllegalArgumentException("Appointment does not exist");
         }
     }
@@ -45,12 +49,12 @@ public class AppointmentManager {
      */
     public void update(Appointment current, Appointment modified)
     {
-        if(!(appoinments.remove(current)))
+        if(!(appointments.remove(current)))
         {
             throw new IllegalArgumentException("Current date does not exist");
         }
         else {
-            appoinments.add(modified);
+            appointments.add(modified);
         }
 
     }
@@ -61,16 +65,22 @@ public class AppointmentManager {
      * @param order
      * @return - an array of appointments
      */
+
     public Appointment[] getAppointmentsOn(LocalDate date, Comparator<Appointment> order)
     {
-        PriorityQueue<Appointment> pq = new PriorityQueue<>();
+        /**
+         * priority queue is min-heap and return as an array
+         */
+
+        PriorityQueue<Appointment> pq =  new PriorityQueue<>();
+
         if(date==null)
         {
-            pq.addAll(appoinments);
+            pq.addAll(appointments);
         }
         else {
 
-            for(Appointment appointment: appoinments)
+            for(Appointment appointment: appointments)
             {
                 if(appointment.occursOn(date))
                 {
@@ -78,7 +88,32 @@ public class AppointmentManager {
                 }
             }
         }
-        return pq.toArray(new Appointment[0]);
+        Appointment[] result = pq.toArray(new Appointment[pq.size()]);
+        if(order!=null)
+        {
+            Arrays.sort(result, order);
+        }
+        else {
+            Arrays.sort(result);
+        }
+        return result;
+        //if comparator is null, return by appointment's natural order
+//        Comparator<Appointment> localOrder  ;
+//        if ( order != null ){
+//            localOrder = order;
+//        } else {
+//            localOrder = Comparator.naturalOrder();
+//        }
+//        //use priority queue to store the desired appointments
+//        PriorityQueue<Appointment> Q = new PriorityQueue<>(localOrder);
+//
+//        for (Appointment appointment :appoinments) {
+//            if ( date == null || appointment.getStartDate().equals(date) )
+//                Q.add(appointment);
+//        }
+//
+//        // use toArray to convert it into an Array
+//        return Q.toArray(new Appointment[0]);
     }
 
     /**
@@ -89,7 +124,7 @@ public class AppointmentManager {
         try(FileOutputStream outfile = new FileOutputStream(filename);
             ObjectOutputStream out = new ObjectOutputStream(outfile))
         {
-            for (Appointment a: appoinments)
+            for (Appointment a: appointments)
             {
                 out.writeObject(a);
             }
@@ -112,7 +147,7 @@ public class AppointmentManager {
             while (true) {
                 Appointment app = (Appointment) in.readObject();
                 if (app != null) {
-                    appoinments.add(app);
+                    appointments.add(app);
                     //System.out.println("Appointment Description: " + app.getDescription());
                 }
             }
@@ -130,5 +165,9 @@ public class AppointmentManager {
             System.out.println("Invalid object type in file");
         }
     }
+
+
+
+
 
 }
