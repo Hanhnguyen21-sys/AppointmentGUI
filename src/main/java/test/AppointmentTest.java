@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
-//include tests until milestone 4
+////include tests until milestone 4
 public class AppointmentTest {
     private Appointment app;
     private AppointmentManager manager;
@@ -19,6 +19,11 @@ public class AppointmentTest {
     public void setAppointment()
     {
         app = new Appointment("Medical", LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 1)) {
+            @Override
+            public int compare(Appointment o1, Appointment o2) {
+                return 0;
+            }
+
             @Override
             public boolean occursOn(LocalDate date) {
                 return false;
@@ -39,7 +44,7 @@ public class AppointmentTest {
     public void addOneAppointment()
     {
         manager.add(daily);
-        assertEquals(1,manager.getAppoinments().size());
+        assertEquals(1,manager.getAppointments().size());
     }
     @Test
     public void addMultipleAppointments()
@@ -48,7 +53,7 @@ public class AppointmentTest {
         manager.add(daily1);
         manager.add(daily2);
         manager.add(daily3);
-        assertEquals(4,manager.getAppoinments().size());
+        assertEquals(4,manager.getAppointments().size());
     }
     @Test
     public void deleteAppointments()
@@ -58,7 +63,7 @@ public class AppointmentTest {
         manager.add(daily2);
         manager.add(daily3);
         manager.delete(daily2);
-        assertEquals(3,manager.getAppoinments().size());
+        assertEquals(3,manager.getAppointments().size());
     }
     @Test
     public void deleteMultipleAppointments()
@@ -69,7 +74,7 @@ public class AppointmentTest {
         manager.add(daily3);
         manager.delete(daily2);
         manager.delete(daily);
-        assertEquals(2,manager.getAppoinments().size());
+        assertEquals(2,manager.getAppointments().size());
     }
     @Test
     public void notAllowDeleteNonExistedAppointments()

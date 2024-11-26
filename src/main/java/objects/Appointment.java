@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Appointment implements Comparable<Appointment>, Serializable{
+public abstract class Appointment implements Comparable<Appointment>, Comparator<Appointment>
+{
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -14,6 +15,7 @@ public abstract class Appointment implements Comparable<Appointment>, Serializab
         this.startDate=startDate;
         this.endDate=endDate;
     }
+
     public String getDescription(){
         return description;
     }
@@ -84,6 +86,13 @@ public abstract class Appointment implements Comparable<Appointment>, Serializab
         else {return -1;}
     }
 
+    @Override
+    public int compare(Appointment o1, Appointment o2) {
+        int r = o1.getDescription().compareTo(o2.getDescription());
+        if(r>0){return -1;}
+        else if(r==0){return 0;}
+        else {return 1;}
+    }
 
 
 }
